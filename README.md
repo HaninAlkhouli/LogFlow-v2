@@ -1,38 +1,38 @@
 # LogFlow
 
-LogFlow is a small Java pipeline application. It reads a text log file line by line and prints each line to the console through separate source, pipeline, and sink components.
+LogFlow, Java ile yazılmış basit bir pipeline uygulamasıdır. Uygulama bir log dosyasını satır satır okur ve her satırı ayrı source, pipeline ve sink bileşenleri üzerinden konsola yazdırır.
 
-## Requirements
+## Gereksinimler
 
-- Java JDK 21 or newer
+- Java JDK 21 veya daha yeni bir sürüm
 
-## Project structure
+## Proje yapısı
 
-- `src/Emitter.java`: sends an item to the next component.
-- `src/Source.java`: interface for components that produce data.
-- `src/Sink.java`: interface for components that consume data.
-- `src/Record.java`: marker interface reserved for future record types.
-- `src/Stage.java`: general processing-stage interface and lifecycle hooks.
-- `src/FileLineSource.java`: reads one `String` per file line.
-- `src/ConsoleSink.java`: prints each received line.
-- `src/Pipeline.java`: connects the source to the sink.
-- `src/Main.java`: reads the argument, assembles the pipeline, and runs it.
-- `data/access-small.log`: sample input log.
+- `src/Emitter.java`: Bir öğeyi sonraki bileşene gönderir.
+- `src/Source.java`: Veri üreten bileşenlerin arayüzüdür.
+- `src/Sink.java`: Veri tüketen bileşenlerin arayüzüdür.
+- `src/Record.java`: Gelecek aşamalardaki kayıt türleri için işaretleyici arayüzdür.
+- `src/Stage.java`: Genel işlem aşaması arayüzü ve yaşam döngüsü metotlarıdır.
+- `src/FileLineSource.java`: Dosyadan her satırı bir `String` olarak okur.
+- `src/ConsoleSink.java`: Gelen her satırı konsola yazdırır.
+- `src/Pipeline.java`: Source ile sink arasındaki bağlantıyı kurar.
+- `src/Main.java`: Komut satırı parametresini alır, pipeline'ı kurar ve çalıştırır.
+- `data/access-small.log`: Örnek giriş log dosyasıdır.
 
-## Compile
+## Derleme
 
-From the project root:
+Proje ana klasöründe çalıştırın:
 
 ```bash
 javac -d out src/*.java
 ```
 
-## Run
+## Çalıştırma
 
 ```bash
 java -cp out Main data/access-small.log
 ```
 
-## Expected result
+## Beklenen sonuç
 
-Every line from `data/access-small.log` is printed in the same order.
+`data/access-small.log` dosyasındaki tüm satırlar aynı sırayla konsola yazdırılır.

@@ -1,12 +1,12 @@
-# Architecture
+# Mimari
 
-The first increment contains a deliberately small pipeline. A source produces items, the pipeline connects components, and a sink consumes the items.
+İlk aşamada bilinçli olarak küçük bir pipeline kurulmuştur. Source verileri üretir, pipeline bileşenleri birbirine bağlar ve sink verileri tüketir.
 
 ```mermaid
 flowchart LR
     A[FileLineSource\nreads one line] --> B[ConsoleSink\nprints one line]
 ```
 
-The `Pipeline` creates the connection between the two components. `Main` only reads the command-line argument, assembles the components, and calls `run()`.
+`Pipeline` iki bileşen arasındaki bağlantıyı kurar. `Main` yalnızca komut satırı parametresini okur, bileşenleri bir araya getirir ve `run()` metodunu çağırır.
 
-The `Emitter` abstraction is used because one input may produce zero, one, or many output items in later increments. Returning one value from a stage would force an unnecessary one-to-one relationship.
+`Emitter` soyutlaması kullanılmıştır; çünkü ilerleyen aşamalarda tek bir giriş sıfır, bir veya birden fazla çıktı üretebilir. Bir aşamadan tek bir değer döndürmek gereksiz bir bire bir ilişki oluştururdu.
