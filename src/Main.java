@@ -1,16 +1,34 @@
 public class Main {
     public static void main(String[] args) {
-        if (args.length != 1) {
-            System.out.println("Usage: java Main <file-path>");
-            return;
+        try {
+            run(CliOptions.parse(args));
+        } catch (IllegalArgumentException error) {
+            System.err.println("Error: " + error.getMessage());
+            System.err.println(CliOptions.usage());
+        }
+    }
+
+    static void run(CliOptions options) {
+        ParserStage parser = new ParserStage();
+        PipelineBuilder<LogRecord> records = PipelineBuilder
+                .from(new FileLineSource(options.input()))
+                .via(parser);
+
+        if (options.minStatus() != null) {
+            records = records.via(new PredicateFilterStage(
+                    record -> record.status() >= options.minStatus()));
+        }
+        if (options.pathPrefix() != null) {
+            records = records.via(new PredicateFilterStage(
+                    record -> record.path().startsWith(options.pathPrefix())));
         }
 
-        FileLineSource source = new FileLineSource(args[0]);
-        ConsoleSink sink = new ConsoleSink();
-        ParserStage parser = new ParserStage();
-
-        Pipeline pipeline = new Pipeline(source, sink).addStage(parser);
+        Pipeline<ProjectedRecord> pipeline = records
+                .via(new ProjectionStage(options.fields()))
+                .to(new FileSink(options.output()));
         pipeline.run();
+
         System.out.println("Malformed lines skipped: " + parser.malformedCount());
+        System.out.println("Output written to: " + options.output().toAbsolutePath());
     }
 }

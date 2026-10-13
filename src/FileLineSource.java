@@ -7,7 +7,11 @@ public class FileLineSource implements Source<String> {
     private final Path filePath;
 
     public FileLineSource(String fileName) {
-        this.filePath = Path.of(fileName);
+        this(Path.of(fileName));
+    }
+
+    public FileLineSource(Path filePath) {
+        this.filePath = filePath;
     }
 
     @Override

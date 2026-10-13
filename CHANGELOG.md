@@ -1,5 +1,16 @@
 # Değişiklik Günlüğü
 
+## v3
+
+- Farklı veri tiplerini sıralı bağlayan fluent `PipelineBuilder` eklendi.
+- Predicate tabanlı `PredicateFilterStage` eklendi.
+- Alan seçimi ve veri minimizasyonu için `ProjectionStage` ile `ProjectedRecord` eklendi.
+- `open()` / `close()` yaşam döngüsünü kullanan UTF-8 `FileSink` eklendi.
+- `--min-status`, `--path-prefix` ve `--fields` CLI seçenekleri eklendi.
+- Her yeni bileşen için birim testleri ve üç aşamalı entegrasyon testi eklendi.
+- Filtre sırası deneyi ve sonucu `ARCHITECTURE.md` içinde belgelendi.
+- Maven proje sürümü `3.0.0` olarak güncellendi.
+
 ## v2
 
 Increment 2 kapsamında değiştirilen ve eklenen dosyalar:

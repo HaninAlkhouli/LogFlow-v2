@@ -1,46 +1,33 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 
-public class Pipeline {
-    private final Source<String> source;
-    private final Sink<LogRecord> sink;
-    private final List<Stage<String, LogRecord>> stages = new ArrayList<>();
+/** A fully assembled, type-safe Source -> Stage(s) -> Sink pipeline. */
+public final class Pipeline<T> {
+    private final PipelineNode<T> output;
+    private final Sink<T> sink;
 
-    public Pipeline(Source<String> source, Sink<LogRecord> sink) {
-        this.source = source;
-        this.sink = sink;
-    }
-
-    public Pipeline addStage(Stage<String, LogRecord> stage) {
-        stages.add(stage);
-        return this;
-    }
-
-    public List<Stage<String, LogRecord>> stages() {
-        return Collections.unmodifiableList(stages);
+    Pipeline(PipelineNode<T> output, Sink<T> sink) {
+        this.output = Objects.requireNonNull(output);
+        this.sink = Objects.requireNonNull(sink);
     }
 
     public void run() {
-        Emitter<LogRecord> sinkEmitter = sink::consume;
-        Emitter<String> sourceEmitter = input -> {
-            for (Stage<String, LogRecord> stage : stages) {
-                try {
-                    stage.process(input, sinkEmitter);
-                } catch (StageException e) {
-                    throw new RuntimeException("Pipeline stage failed", e);
-                }
-            }
-        };
-
-        for (Stage<String, LogRecord> stage : stages) {
-            stage.open();
-        }
+        boolean outputOpened = false;
+        boolean sinkOpened = false;
         try {
-            source.produce(sourceEmitter);
+            output.open();
+            outputOpened = true;
+            sink.open();
+            sinkOpened = true;
+            output.produce(sink::consume);
         } finally {
-            for (int i = stages.size() - 1; i >= 0; i--) {
-                stages.get(i).close();
+            try {
+                if (sinkOpened) {
+                    sink.close();
+                }
+            } finally {
+                if (outputOpened) {
+                    output.close();
+                }
             }
         }
     }
